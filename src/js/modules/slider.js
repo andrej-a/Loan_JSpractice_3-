@@ -39,7 +39,7 @@ export default class Slider {
         
     }
 
-    plusSlides(n) {
+    changeSlides(n) {
         this.showSlides(this.slideIndex += n);
     }
 
@@ -50,7 +50,7 @@ export default class Slider {
         
         this.btns.forEach(btn => {
             btn.addEventListener("click", () => {
-                this.plusSlides(1);
+                this.changeSlides(1);
             });
 
             btn.parentNode.previousElementSibling.addEventListener("click", (event) => {
