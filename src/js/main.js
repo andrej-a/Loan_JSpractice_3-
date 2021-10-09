@@ -1,14 +1,47 @@
-import Slider from "./modules/slider";
+
 import ModalVideoPlayer from "./modules/modalVideoPlay";
-import {MiniSliders} from "./modules/miniSliders";
+import MainSlider from "./modules/slider/slider-main";
+import MiniSlider from "./modules/slider/slider-mini";
+
 window.addEventListener("DOMContentLoaded", () => {
 
-    const slider = new Slider(".page", ".next", 3000);
+    const slider = new MainSlider({
+        container: ".page",
+        btns:".next",
+        timeMS: 3000});
     slider.render();
+
+    const showUpSlider = new MiniSlider({
+        container: ".showup__content-slider",
+        next: ".showup__next", 
+        prev: ".showup__prev",
+        activeClass: "card-active",
+        animate: true
+    });
+    showUpSlider.init();
+
+    const modulesUpSlider = new MiniSlider({
+        container: ".modules__content-slider",
+        next: ".modules__info-btns .slick-next", 
+        prev: ".modules__info-btns .slick-prev",
+        activeClass: "card-active",
+        animate: true,
+        autoplay: true,
+        timeMS: 5000
+    });
+    modulesUpSlider.init();
+
+    const feedSlider = new MiniSlider({
+        container: ".feed__slider",
+        next: ".feed__slider .slick-next", 
+        prev: ".feed__slider .slick-prev",
+        activeClass: "feed__item-active",
+    });
+    feedSlider.init();
+
 
     const player = new ModalVideoPlayer(".showup  .play", ".overlay", ".close");
     player.openModalWindow();
 
-    const secondSlider = new MiniSliders(".showup__content-slider", ".showup__next", ".showup__prev");
-    secondSlider.render();
+    
 });

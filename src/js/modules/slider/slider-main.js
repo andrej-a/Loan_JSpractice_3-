@@ -1,13 +1,9 @@
 "use strict";
+import Slider from "./slider";
 
-export default class Slider {
-    constructor(page, btns, timeMS) {
-        this.page = document.querySelector(page);//главный блок, страница, родитель
-        this.slides = this.page.children; //все дети на странице Node
-        this.btns = document.querySelectorAll(btns);
-        this.slideIndex = 1;
-
-        this.timeMS = timeMS;
+export default class MainSlider extends Slider{
+    constructor(btns) {
+        super(btns);
     }
 
     showSlides(n) {//метод, как функция но метод
@@ -62,4 +58,4 @@ export default class Slider {
 
         this.showSlides(this.slideIndex);
     }
-}//class
+}
