@@ -2763,6 +2763,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_modalVideoPlay__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/modalVideoPlay */ "./src/js/modules/modalVideoPlay.js");
 /* harmony import */ var _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider/slider-main */ "./src/js/modules/slider/slider-main.js");
 /* harmony import */ var _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/slider/slider-mini */ "./src/js/modules/slider/slider-mini.js");
+/* harmony import */ var _modules_question_cards__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/question-cards */ "./src/js/modules/question-cards.js");
+
 
 
 
@@ -2800,6 +2802,16 @@ window.addEventListener("DOMContentLoaded", function () {
   feedSlider.init();
   var player = new _modules_modalVideoPlay__WEBPACK_IMPORTED_MODULE_0__["default"](".showup  .play", ".overlay", ".close");
   player.openModalWindow();
+  var questionCardsOld = new _modules_question_cards__WEBPACK_IMPORTED_MODULE_3__["default"]({
+    container: ".officerold",
+    cards: ".officer__card-item"
+  });
+  questionCardsOld.init();
+  var questionCardsNew = new _modules_question_cards__WEBPACK_IMPORTED_MODULE_3__["default"]({
+    container: ".officernew",
+    cards: ".officer__card-item"
+  });
+  questionCardsNew.init();
 });
 
 /***/ }),
@@ -2890,6 +2902,93 @@ function () {
 
   return ModalVideoPlayer;
 }(); //class
+
+
+
+
+/***/ }),
+
+/***/ "./src/js/modules/question-cards.js":
+/*!******************************************!*\
+  !*** ./src/js/modules/question-cards.js ***!
+  \******************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Question; });
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+
+
+
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Question =
+/*#__PURE__*/
+function () {
+  function Question() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        container = _ref.container,
+        cards = _ref.cards;
+
+    _classCallCheck(this, Question);
+
+    this.container = document.querySelector(container);
+    this.cards = this.container.querySelectorAll(cards);
+    this.counter = 0;
+  }
+
+  _createClass(Question, [{
+    key: "showCards",
+    value: function showCards(item) {
+      var _this = this;
+
+      item.addEventListener("click", function () {
+        if (_this.counter < _this.cards.length - 2) {
+          _this.cards[_this.counter].style.display = "flex";
+
+          _this.cards[_this.counter].classList.add("animated", "fadeIn");
+
+          _this.counter++;
+        } else {
+          _this.cards[_this.counter].style.display = "flex";
+
+          _this.cards[_this.counter].classList.add("animated", "fadeIn");
+
+          setTimeout(function () {
+            item.classList.add("animated", "fadeOut");
+            item.style.display = "none";
+          }, 1000);
+        }
+      });
+    }
+  }, {
+    key: "init",
+    value: function init() {
+      var _this2 = this;
+
+      this.cards.forEach(function (item, i) {
+        if (i === _this2.cards.length - 1) {
+          _this2.cards[i].style.display = "flex";
+          _this2.cards[i].style.cursor = "pointer";
+
+          _this2.showCards(_this2.cards[i]);
+        } else {
+          item.style.display = "none";
+        }
+      });
+    }
+  }]);
+
+  return Question;
+}(); //question
 
 
 

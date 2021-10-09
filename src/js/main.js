@@ -2,6 +2,7 @@
 import ModalVideoPlayer from "./modules/modalVideoPlay";
 import MainSlider from "./modules/slider/slider-main";
 import MiniSlider from "./modules/slider/slider-mini";
+import Question from "./modules/question-cards";
 
 window.addEventListener("DOMContentLoaded", () => {
 
@@ -42,6 +43,18 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const player = new ModalVideoPlayer(".showup  .play", ".overlay", ".close");
     player.openModalWindow();
+
+    const questionCardsOld = new Question({
+        container: ".officerold",
+        cards: ".officer__card-item"
+    });
+    questionCardsOld.init();
+
+    const questionCardsNew = new Question({
+        container: ".officernew",
+        cards: ".officer__card-item"
+    });
+    questionCardsNew.init();
 
     
 });
