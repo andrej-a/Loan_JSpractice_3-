@@ -3,6 +3,7 @@ import ModalVideoPlayer from "./modules/modalVideoPlay";
 import MainSlider from "./modules/slider/slider-main";
 import MiniSlider from "./modules/slider/slider-mini";
 import Question from "./modules/question-cards";
+import Forms from "./modules/forms";
 
 window.addEventListener("DOMContentLoaded", () => {
 
@@ -55,6 +56,19 @@ window.addEventListener("DOMContentLoaded", () => {
         cards: ".officer__card-item"
     });
     questionCardsNew.init();
+
+    const bigForm = new Forms({
+        forms: ".join .form",
+        mailInputs: "[name='email']",
+        phoneInputs: "[name='phone']"
+    });
+    bigForm.init();
+
+    const smallForm = new Forms({
+        forms: ".schedule .form",
+        mailInputs: "[name='email']"
+    });
+    smallForm.init();
 
     
 });
