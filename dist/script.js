@@ -5054,6 +5054,13 @@ window.addEventListener("DOMContentLoaded", function () {
     mailInputs: "[name='email']"
   });
   smallForm.init();
+  var secondPageSlider = new _modules_slider_slider_main__WEBPACK_IMPORTED_MODULE_1__["default"]({
+    container: ".moduleapp",
+    btns: ".sidecontrol .next",
+    next: ".nextmodule",
+    prev: ".prevmodule"
+  });
+  secondPageSlider.render();
 });
 
 /***/ }),
@@ -5361,7 +5368,11 @@ function () {
     _classCallCheck(this, Question);
 
     this.container = document.querySelector(container);
-    this.cards = this.container.querySelectorAll(cards);
+
+    try {
+      this.cards = this.container.querySelectorAll(cards);
+    } catch (e) {}
+
     this.counter = 0;
   }
 
@@ -5394,16 +5405,18 @@ function () {
     value: function init() {
       var _this2 = this;
 
-      this.cards.forEach(function (item, i) {
-        if (i === _this2.cards.length - 1) {
-          _this2.cards[i].style.display = "flex";
-          _this2.cards[i].style.cursor = "pointer";
+      try {
+        this.cards.forEach(function (item, i) {
+          if (i === _this2.cards.length - 1) {
+            _this2.cards[i].style.display = "flex";
+            _this2.cards[i].style.cursor = "pointer";
 
-          _this2.showCards(_this2.cards[i]);
-        } else {
-          item.style.display = "none";
-        }
-      });
+            _this2.showCards(_this2.cards[i]);
+          } else {
+            item.style.display = "none";
+          }
+        });
+      } catch (e) {}
     }
   }]);
 
@@ -5481,10 +5494,10 @@ var MainSlider =
 function (_Slider) {
   _inherits(MainSlider, _Slider);
 
-  function MainSlider(btns) {
+  function MainSlider(btns, next, prev) {
     _classCallCheck(this, MainSlider);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(MainSlider).call(this, btns));
+    return _possibleConstructorReturn(this, _getPrototypeOf(MainSlider).call(this, btns, next, prev));
   }
 
   _createClass(MainSlider, [{
@@ -5493,13 +5506,17 @@ function (_Slider) {
       var _this = this;
 
       //метод, как функция но метод
-      if (n > this.slides.length) {
-        this.slideIndex = 1;
-      }
+      try {
+        if (n > this.slides.length) {
+          this.slideIndex = 1;
+        }
+      } catch (e) {}
 
-      if (n < 1) {
-        this.slideIndex = this.slides.length;
-      }
+      try {
+        if (n < 1) {
+          this.slideIndex = this.slides.length;
+        }
+      } catch (e) {}
 
       try {
         this.card.style.display = "none";
@@ -5513,11 +5530,13 @@ function (_Slider) {
         }
       } catch (e) {}
 
-      this.slides.forEach(function (slide) {
-        slide.style.display = "none";
-      });
-      this.slides[this.slideIndex - 1].style.display = "block";
-      this.slides[this.slideIndex - 1].classList.add("animated", "fadeIn");
+      try {
+        this.slides.forEach(function (slide) {
+          slide.style.display = "none";
+        });
+        this.slides[this.slideIndex - 1].style.display = "block";
+        this.slides[this.slideIndex - 1].classList.add("animated", "fadeIn");
+      } catch (e) {}
     }
   }, {
     key: "changeSlides",
@@ -5525,13 +5544,9 @@ function (_Slider) {
       this.showSlides(this.slideIndex += n);
     }
   }, {
-    key: "render",
-    value: function render() {
+    key: "bindTriggers",
+    value: function bindTriggers() {
       var _this2 = this;
-
-      try {
-        this.card = document.querySelector(".hanson");
-      } catch (e) {}
 
       this.btns.forEach(function (btn) {
         btn.addEventListener("click", function () {
@@ -5544,6 +5559,29 @@ function (_Slider) {
           _this2.showSlides(_this2.slideIndex);
         });
       });
+      this.prev.forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          _this2.changeSlides(-1);
+        });
+      });
+      this.next.forEach(function (btn) {
+        btn.addEventListener("click", function (e) {
+          e.preventDefault();
+
+          _this2.changeSlides(1);
+        });
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      try {
+        this.card = document.querySelector(".hanson");
+      } catch (e) {}
+
+      this.bindTriggers();
       this.showSlides(this.slideIndex);
     }
   }]);
@@ -5632,73 +5670,92 @@ function (_Slider) {
     value: function decorizeActiveItem() {
       var _this = this;
 
-      this.slides.forEach(function (item) {
-        item.classList.remove(_this.activeClass);
+      try {
+        this.slides.forEach(function (item) {
+          item.classList.remove(_this.activeClass);
 
-        if (_this.animate) {
-          item.querySelector(".card__title").style.opacity = 0.4;
-          item.querySelector(".card__controls-arrow").style.opacity = 0;
+          if (_this.animate) {
+            item.querySelector(".card__title").style.opacity = 0.4;
+            item.querySelector(".card__controls-arrow").style.opacity = 0;
+          }
+        });
+        this.slides[0].classList.add(this.activeClass);
+
+        if (this.animate) {
+          this.slides[0].querySelector(".card__title").style.opacity = 1;
+          this.slides[0].querySelector(".card__controls-arrow").style.opacity = 1;
         }
-      });
-      this.slides[0].classList.add(this.activeClass);
-
-      if (this.animate) {
-        this.slides[0].querySelector(".card__title").style.opacity = 1;
-        this.slides[0].querySelector(".card__controls-arrow").style.opacity = 1;
-      }
+      } catch (e) {}
     }
   }, {
     key: "autoplaySlides",
     value: function autoplaySlides() {
       var _this2 = this;
 
-      if (this.autoplay) {
-        var interval = setInterval(function () {
-          if (_this2.container.classList.contains("feed__slider")) {
-            _this2.container.insertBefore(_this2.slides[0], _this2.slides[_this2.slides.length - 2]);
+      try {
+        if (this.autoplay) {
+          var interval = setInterval(function () {
+            try {
+              if (_this2.container.classList.contains("feed__slider")) {
+                _this2.container.insertBefore(_this2.slides[0], _this2.slides[_this2.slides.length - 2]);
 
-            _this2.decorizeActiveItem();
-          } else {
-            _this2.container.appendChild(_this2.slides[0]);
+                _this2.decorizeActiveItem();
+              } else {
+                _this2.container.appendChild(_this2.slides[0]);
 
-            _this2.decorizeActiveItem();
-          }
-        }, this.timeMS);
-      }
+                _this2.decorizeActiveItem();
+              }
+            } catch (e) {}
+          }, this.timeMS);
+        }
+      } catch (e) {}
     }
   }, {
     key: "bindTriggers",
     value: function bindTriggers() {
       var _this3 = this;
 
-      if (this.container.classList.contains("feed__slider")) {
-        this.next.addEventListener("click", function () {
-          _this3.container.insertBefore(_this3.slides[0], _this3.slides[_this3.slides.length - 2]);
+      try {
+        if (this.container.classList.contains("feed__slider")) {
+          this.next.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              _this3.container.insertBefore(_this3.slides[0], _this3.slides[_this3.slides.length - 2]);
 
-          _this3.decorizeActiveItem();
-        });
-        this.prev.addEventListener("click", function () {
-          _this3.container.insertBefore(_this3.slides[_this3.slides.length - 3], _this3.slides[0]);
+              _this3.decorizeActiveItem();
+            });
+          });
+          this.prev.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              _this3.container.insertBefore(_this3.slides[_this3.slides.length - 3], _this3.slides[0]);
 
-          _this3.decorizeActiveItem();
-        });
-      } else {
-        this.next.addEventListener("click", function () {
-          _this3.container.appendChild(_this3.slides[0]);
+              _this3.decorizeActiveItem();
+            });
+          });
+        } else {
+          this.next.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              _this3.container.appendChild(_this3.slides[0]);
 
-          _this3.decorizeActiveItem();
-        });
-        this.prev.addEventListener("click", function () {
-          _this3.container.insertBefore(_this3.slides[_this3.slides.length - 1], _this3.slides[0]);
+              _this3.decorizeActiveItem();
+            });
+          });
+          this.prev.forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              _this3.container.insertBefore(_this3.slides[_this3.slides.length - 1], _this3.slides[0]);
 
-          _this3.decorizeActiveItem();
-        });
-      }
+              _this3.decorizeActiveItem();
+            });
+          });
+        }
+      } catch (e) {}
     }
   }, {
     key: "init",
     value: function init() {
-      this.container.style.cssText = "\n            display: flex;\n            flex-wrap: wrap;\n            overflow: hidden;\n            align-items: flex-start;\n        ";
+      try {
+        this.container.style.cssText = "\n            display: flex;\n            flex-wrap: wrap;\n            overflow: hidden;\n            align-items: flex-start;\n        ";
+      } catch (e) {}
+
       this.decorizeActiveItem();
       this.bindTriggers();
       this.autoplaySlides();
@@ -5747,11 +5804,13 @@ var Slider = function Slider() {
 
   this.container = document.querySelector(container); //главный блок, страница, родитель
 
-  this.slides = this.container.children; //все дети на странице Node
+  try {
+    this.slides = this.container.children; //все дети на странице Node
+  } catch (e) {}
 
   this.btns = document.querySelectorAll(btns);
-  this.next = document.querySelector(next);
-  this.prev = document.querySelector(prev);
+  this.next = document.querySelectorAll(next);
+  this.prev = document.querySelectorAll(prev);
   this.activeClass = activeClass;
   this.animate = animate;
   this.autoplay = autoplay;

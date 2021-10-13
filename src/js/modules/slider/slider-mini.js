@@ -6,75 +6,89 @@ export default class MiniSlider extends Slider{
     }
 
     decorizeActiveItem() {
-        this.slides.forEach(item => {
-            item.classList.remove(this.activeClass);
-    
-            if (this.animate) {
-                item.querySelector(".card__title").style.opacity = 0.4;
-                item.querySelector(".card__controls-arrow").style.opacity = 0;
-            }
-        });
+        try{
+            this.slides.forEach(item => {
+                item.classList.remove(this.activeClass);
         
-        this.slides[0].classList.add(this.activeClass);
+                if (this.animate) {
+                    item.querySelector(".card__title").style.opacity = 0.4;
+                    item.querySelector(".card__controls-arrow").style.opacity = 0;
+                }
+            });
 
-        if (this.animate) {
-            this.slides[0].querySelector(".card__title").style.opacity = 1;
-            this.slides[0].querySelector(".card__controls-arrow").style.opacity = 1;
-        }
+            this.slides[0].classList.add(this.activeClass);
+
+            if (this.animate) {
+                this.slides[0].querySelector(".card__title").style.opacity = 1;
+                this.slides[0].querySelector(".card__controls-arrow").style.opacity = 1;
+            }
+        } catch(e){} 
     }
 
     autoplaySlides() {
-        if (this.autoplay) {
-            const interval = setInterval(() => {
-                if (this.container.classList.contains("feed__slider")) {
-                    this.container.insertBefore(this.slides[0], this.slides[this.slides.length - 2]);
-                    this.decorizeActiveItem();
-                } else {
-                    this.container.appendChild(this.slides[0]);
-                    this.decorizeActiveItem();
-                }
-            }, this.timeMS);
-        }
+        try{
+            if (this.autoplay) {
+                const interval = setInterval(() => {
+                    try{
+                        if (this.container.classList.contains("feed__slider")) {
+                            this.container.insertBefore(this.slides[0], this.slides[this.slides.length - 2]);
+                            this.decorizeActiveItem();
+                        } else {
+                            this.container.appendChild(this.slides[0]);
+                            this.decorizeActiveItem();
+                        }
+                    }catch(e){}
+                }, this.timeMS);
+            }
+        }catch(e){}
     }
 
     bindTriggers() {
-
-        if (this.container.classList.contains("feed__slider")) {
+        try {
+            if (this.container.classList.contains("feed__slider")) {
             
-            this.next.addEventListener("click", () => {
-                this.container.insertBefore(this.slides[0], this.slides[this.slides.length - 2]);
-                this.decorizeActiveItem();
-            });
-    
-            this.prev.addEventListener("click", () => {
-                this.container.insertBefore(this.slides[this.slides.length - 3], this.slides[0]);
-                this.decorizeActiveItem();
-            });
-
-        } else {
-            
-            this.next.addEventListener("click", () => {
-            this.container.appendChild(this.slides[0]);
-            this.decorizeActiveItem();
-        });
-
-        this.prev.addEventListener("click", () => {
-            this.container.insertBefore(this.slides[this.slides.length - 1], this.slides[0]);
-            this.decorizeActiveItem();
-
-        });
-        }
-
+                this.next.forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        this.container.insertBefore(this.slides[0], this.slides[this.slides.length - 2]);
+                        this.decorizeActiveItem();
+                    });
+                });
         
+                this.prev.forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        this.container.insertBefore(this.slides[this.slides.length - 3], this.slides[0]);
+                        this.decorizeActiveItem();
+                    });
+                });
+    
+            } else {
+                
+                this.next.forEach(btn => {
+                    btn.addEventListener("click", () => {
+                        this.container.appendChild(this.slides[0]);
+                        this.decorizeActiveItem();
+                    });
+                });
+    
+            this.prev.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    this.container.insertBefore(this.slides[this.slides.length - 1], this.slides[0]);
+                    this.decorizeActiveItem();
+                });
+            });
+            }
+        }catch(e){}
     }
 
     init() {
-        this.container.style.cssText = `
+        try{
+            this.container.style.cssText = `
             display: flex;
             flex-wrap: wrap;
             overflow: hidden;
             align-items: flex-start;
         `;
+        } catch(e) {}
         this.decorizeActiveItem();
         this.bindTriggers();
         this.autoplaySlides();

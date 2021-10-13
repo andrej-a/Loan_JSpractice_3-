@@ -6,7 +6,6 @@ import Question from "./modules/question-cards";
 import Forms from "./modules/forms";
 
 window.addEventListener("DOMContentLoaded", () => {
-
     const slider = new MainSlider({
         container: ".page",
         btns:".next",
@@ -44,7 +43,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const player = new ModalVideoPlayer(".showup  .play", ".overlay", ".close");
     player.openModalWindow();
-
+    
     const questionCardsOld = new Question({
         container: ".officerold",
         cards: ".officer__card-item"
@@ -70,5 +69,12 @@ window.addEventListener("DOMContentLoaded", () => {
     });
     smallForm.init();
 
+    const secondPageSlider = new MainSlider({
+        container: ".moduleapp",
+        btns: ".sidecontrol .next",
+        next: ".nextmodule",
+        prev: ".prevmodule" 
+    });
+    secondPageSlider.render();
     
 });

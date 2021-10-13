@@ -3,7 +3,9 @@
 export default class Question {
     constructor({container, cards} = {}) {
         this.container = document.querySelector(container);
-        this.cards = this.container.querySelectorAll(cards);
+        try{
+            this.cards = this.container.querySelectorAll(cards);
+        }catch(e){}
         this.counter = 0;
     }
 
@@ -28,14 +30,16 @@ export default class Question {
     }
 
     init() {
-        this.cards.forEach((item, i) => {
-            if (i === (this.cards.length - 1) ) {
-                this.cards[i].style.display = "flex";
-                this.cards[i].style.cursor = "pointer";
-                this.showCards(this.cards[i]);
-            } else {
-                item.style.display = "none";
-            }
-        });
+        try{
+            this.cards.forEach((item, i) => {
+                if (i === (this.cards.length - 1) ) {
+                    this.cards[i].style.display = "flex";
+                    this.cards[i].style.cursor = "pointer";
+                    this.showCards(this.cards[i]);
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        }catch(e){}
     }
 }//question

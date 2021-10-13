@@ -2,18 +2,22 @@
 import Slider from "./slider";
 
 export default class MainSlider extends Slider{
-    constructor(btns) {
-        super(btns);
+    constructor(btns, next, prev) {
+        super(btns, next, prev);
     }
 
     showSlides(n) {//метод, как функция но метод
-        if (n > this.slides.length) {
-            this.slideIndex = 1;
-        }
+        try {
+            if (n > this.slides.length) {
+                this.slideIndex = 1;
+            }
+        } catch(e) {}
 
-        if (n < 1) {
-            this.slideIndex = this.slides.length;
-        }
+        try {
+            if (n < 1) {
+                this.slideIndex = this.slides.length;
+            }
+        }catch(e){}
 
         try {
             this.card.style.display = "none";
@@ -26,11 +30,13 @@ export default class MainSlider extends Slider{
             }
         } catch (e) {}
 
-        this.slides.forEach(slide => {
-            slide.style.display = "none";
-        });
-        this.slides[this.slideIndex - 1].style.display = "block"; 
-        this.slides[this.slideIndex - 1].classList.add("animated", "fadeIn");
+        try{
+            this.slides.forEach(slide => {
+                slide.style.display = "none";
+            });
+            this.slides[this.slideIndex - 1].style.display = "block"; 
+            this.slides[this.slideIndex - 1].classList.add("animated", "fadeIn");
+        }catch(e) {}
 
         
     }
@@ -39,15 +45,12 @@ export default class MainSlider extends Slider{
         this.showSlides(this.slideIndex += n);
     }
 
-    render() {
-        try {
-            this.card = document.querySelector(".hanson");
-        }catch(e){}
-        
+    bindTriggers() {
         this.btns.forEach(btn => {
             btn.addEventListener("click", () => {
                 this.changeSlides(1);
             });
+        
 
             btn.parentNode.previousElementSibling.addEventListener("click", (event) => {
                 event.preventDefault();
@@ -56,6 +59,26 @@ export default class MainSlider extends Slider{
             });
         });
 
+            this.prev.forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    this.changeSlides(-1);
+                });
+            });
+
+            this.next.forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    this.changeSlides(1);
+                });
+            });
+    }
+    
+    render() {
+        try {
+            this.card = document.querySelector(".hanson");
+        }catch(e){}
+        this.bindTriggers();
         this.showSlides(this.slideIndex);
     }
 }
