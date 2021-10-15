@@ -342,6 +342,36 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/core-js/internals/array-method-has-species-support.js":
+/*!****************************************************************************!*\
+  !*** ./node_modules/core-js/internals/array-method-has-species-support.js ***!
+  \****************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
+var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js/internals/well-known-symbol.js");
+var V8_VERSION = __webpack_require__(/*! ../internals/v8-version */ "./node_modules/core-js/internals/v8-version.js");
+
+var SPECIES = wellKnownSymbol('species');
+
+module.exports = function (METHOD_NAME) {
+  // We can't use this feature detection in V8 since it causes
+  // deoptimization and serious performance degradation
+  // https://github.com/zloirock/core-js/issues/677
+  return V8_VERSION >= 51 || !fails(function () {
+    var array = [];
+    var constructor = array.constructor = {};
+    constructor[SPECIES] = function () {
+      return { foo: 1 };
+    };
+    return array[METHOD_NAME](Boolean).foo !== 1;
+  });
+};
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/internals/array-species-create.js":
 /*!****************************************************************!*\
   !*** ./node_modules/core-js/internals/array-species-create.js ***!
@@ -2979,6 +3009,38 @@ exports.f = wellKnownSymbol;
 
 /***/ }),
 
+/***/ "./node_modules/core-js/modules/es.array.filter.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/core-js/modules/es.array.filter.js ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js/internals/export.js");
+var $filter = __webpack_require__(/*! ../internals/array-iteration */ "./node_modules/core-js/internals/array-iteration.js").filter;
+var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js/internals/fails.js");
+var arrayMethodHasSpeciesSupport = __webpack_require__(/*! ../internals/array-method-has-species-support */ "./node_modules/core-js/internals/array-method-has-species-support.js");
+
+var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('filter');
+// Edge 14- issue
+var USES_TO_LENGTH = HAS_SPECIES_SUPPORT && !fails(function () {
+  [].filter.call({ length: -1, 0: 1 }, function (it) { throw it; });
+});
+
+// `Array.prototype.filter` method
+// https://tc39.github.io/ecma262/#sec-array.prototype.filter
+// with adding support of @@species
+$({ target: 'Array', proto: true, forced: !HAS_SPECIES_SUPPORT || !USES_TO_LENGTH }, {
+  filter: function filter(callbackfn /* , thisArg */) {
+    return $filter(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+  }
+});
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js/modules/es.array.iterator.js":
 /*!***********************************************************!*\
   !*** ./node_modules/core-js/modules/es.array.iterator.js ***!
@@ -5031,8 +5093,8 @@ window.addEventListener("DOMContentLoaded", function () {
     activeClass: "feed__item-active"
   });
   feedSlider.init();
-  var player = new _modules_modalVideoPlay__WEBPACK_IMPORTED_MODULE_0__["default"](".showup  .play", ".overlay", ".close");
-  player.openModalWindow();
+  new _modules_modalVideoPlay__WEBPACK_IMPORTED_MODULE_0__["default"](".showup  .play", ".overlay", ".close").init();
+  new _modules_modalVideoPlay__WEBPACK_IMPORTED_MODULE_0__["default"](".module__video-item .play", ".overlay", ".close").init();
   var questionCardsOld = new _modules_question_cards__WEBPACK_IMPORTED_MODULE_3__["default"]({
     container: ".officerold",
     cards: ".officer__card-item"
@@ -5253,8 +5315,11 @@ function () {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return ModalVideoPlayer; });
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
-/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es.array.filter */ "./node_modules/core-js/modules/es.array.filter.js");
+/* harmony import */ var core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_filter__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_1__);
+
 
 
 
@@ -5274,6 +5339,8 @@ function () {
     this.triggers = document.querySelectorAll(triggers);
     this.modalWindow = document.querySelector(modalWindow);
     this.closeTrigger = this.modalWindow.querySelector(closeTrigger);
+    this.onPlayerStateChange = this.onPlayerStateChange.bind(this); //!!! ВАЖНО иначе при нескольких обработчиках
+    //потеряется контекст вызова
   }
 
   _createClass(ModalVideoPlayer, [{
@@ -5281,21 +5348,44 @@ function () {
     value: function openModalWindow() {
       var _this = this;
 
-      this.triggers.forEach(function (trigger) {
+      this.triggers.forEach(function (trigger, i) {
+        try {
+          var blockedElem = trigger.closest(".module__video-item").nextElementSibling;
+
+          if (i % 2 == 0) {
+            blockedElem.setAttribute("data-disabled", "true");
+          }
+        } catch (e) {}
+
         trigger.addEventListener("click", function () {
-          if (document.querySelector("iframe#frame")) {
-            _this.modalWindow.style.display = "flex";
-          } else {
-            _this.modalWindow.style.display = "flex";
+          //можно проверить просто на существование
+          if (!trigger.closest(".module__video-item") || trigger.closest(".module__video-item").getAttribute("data-disabled") !== "true") {
+            _this.active = trigger;
 
-            _this.createPlayer(trigger.getAttribute('data-url')); //1
+            if (document.querySelector("iframe#frame")) {
+              //если плеер уже был создан, то не пересоздаем
+              _this.modalWindow.style.display = "flex";
 
+              if (_this.path !== trigger.getAttribute('data-url')) {
+                //если нажата другая кнопка с другим data-url
+                _this.path = trigger.getAttribute('data-url'); //получаем новую ссылку на видео
+
+                _this.player.loadVideoById({
+                  videoId: _this.path
+                });
+
+                _this.player.stopVideo();
+              }
+            } else {
+              _this.modalWindow.style.display = "flex";
+              _this.path = trigger.getAttribute('data-url'); //получаем ссылку на видео
+
+              _this.createPlayer(_this.path); //1 создаем плеер с полученной ссылкой
+
+            }
           }
         });
       });
-      this.init(); //2
-
-      this.closeModalWindow();
     }
   }, {
     key: "closeModalWindow",
@@ -5315,6 +5405,7 @@ function () {
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+      this.openModalWindow();
     }
   }, {
     key: "createPlayer",
@@ -5322,8 +5413,36 @@ function () {
       this.player = new YT.Player('frame', {
         height: '100%',
         width: '100%',
-        videoId: "".concat(url)
+        videoId: "".concat(url),
+        events: {
+          'onStateChange': this.onPlayerStateChange
+        }
       });
+      this.closeModalWindow();
+    }
+  }, {
+    key: "onPlayerStateChange",
+    value: function onPlayerStateChange(state) {
+      //state внутренний аргумент
+      try {
+        var blockedElem = this.active.closest(".module__video-item").nextElementSibling;
+        var playBtn = this.active.querySelector("svg").cloneNode(true); //cloneNode -- копирование ноды. параметр true
+        //включает глубокое копирование (с нодой копируются ее потомки и т.п.)
+
+        if (state.data === 0) {
+          //если видео целиком просмотрено
+          if (blockedElem.querySelector(".play__circle").classList.contains("closed")) {
+            blockedElem.querySelector(".play__circle").classList.remove("closed");
+            blockedElem.querySelector("svg").remove();
+            blockedElem.querySelector(".play__circle").appendChild(playBtn);
+            blockedElem.querySelector(".play__text").textContent = "play video";
+            blockedElem.querySelector(".play__text").classList.remove("attention");
+            blockedElem.style.opacity = 1;
+            blockedElem.style.filter = "none";
+            blockedElem.setAttribute("data-disabled", "false");
+          }
+        }
+      } catch (e) {}
     }
   }]);
 

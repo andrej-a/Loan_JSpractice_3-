@@ -41,8 +41,8 @@ window.addEventListener("DOMContentLoaded", () => {
     feedSlider.init();
 
 
-    const player = new ModalVideoPlayer(".showup  .play", ".overlay", ".close");
-    player.openModalWindow();
+    new ModalVideoPlayer(".showup  .play", ".overlay", ".close").init();
+    new ModalVideoPlayer(".module__video-item .play", ".overlay", ".close").init();
     
     const questionCardsOld = new Question({
         container: ".officerold",
