@@ -5056,6 +5056,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_slider_slider_mini__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/slider/slider-mini */ "./src/js/modules/slider/slider-mini.js");
 /* harmony import */ var _modules_question_cards__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/question-cards */ "./src/js/modules/question-cards.js");
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
+/* harmony import */ var _modules_accordeon__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/accordeon */ "./src/js/modules/accordeon.js");
+/* harmony import */ var _modules_downloadFile__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/downloadFile */ "./src/js/modules/downloadFile.js");
+
+
 
 
 
@@ -5123,7 +5127,150 @@ window.addEventListener("DOMContentLoaded", function () {
     prev: ".prevmodule"
   });
   secondPageSlider.render();
+  new _modules_accordeon__WEBPACK_IMPORTED_MODULE_5__["default"](".plus__content", ".msg").init();
+  new _modules_downloadFile__WEBPACK_IMPORTED_MODULE_6__["default"](".download").init();
 });
+
+/***/ }),
+
+/***/ "./src/js/modules/accordeon.js":
+/*!*************************************!*\
+  !*** ./src/js/modules/accordeon.js ***!
+  \*************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Accordeon; });
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+
+
+
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Accordeon =
+/*#__PURE__*/
+function () {
+  function Accordeon(triggers, showingText) {
+    _classCallCheck(this, Accordeon);
+
+    this.triggers = document.querySelectorAll(triggers);
+    this.showingText = document.querySelectorAll(showingText);
+  }
+
+  _createClass(Accordeon, [{
+    key: "showDesciption",
+    value: function showDesciption() {
+      var _this = this;
+
+      this.triggers.forEach(function (btn, i, arr) {
+        btn.addEventListener("click", function () {
+          if (_this.showingText[i].style.display === "none") {
+            _this.showingText[i].classList.remove("fadeOut");
+
+            _this.showingText[i].classList.add("animated", "fadeIn");
+
+            _this.showingText[i].style.display = "block";
+          } else {
+            _this.showingText[i].classList.remove("fadeIn");
+
+            _this.showingText[i].classList.add("animated", "fadeOut");
+
+            _this.showingText[i].style.display = "none";
+          }
+        });
+      });
+    }
+  }, {
+    key: "init",
+    value: function init() {
+      this.showingText.forEach(function (item) {
+        item.style.display = "none";
+      });
+      this.showDesciption();
+    }
+  }]);
+
+  return Accordeon;
+}(); //accordeon
+
+
+
+
+/***/ }),
+
+/***/ "./src/js/modules/downloadFile.js":
+/*!****************************************!*\
+  !*** ./src/js/modules/downloadFile.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Download; });
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/web.dom-collections.for-each */ "./node_modules/core-js/modules/web.dom-collections.for-each.js");
+/* harmony import */ var core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_for_each__WEBPACK_IMPORTED_MODULE_0__);
+
+
+
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var Download =
+/*#__PURE__*/
+function () {
+  function Download(triggers) {
+    _classCallCheck(this, Download);
+
+    this.triggers = document.querySelectorAll(triggers);
+    this.path = "assets/img/mainbg.jpg";
+  } //триггером скачивания должна быть ссылка, как <a></a>; тут ее нет, поэтому сначала ее создаем, настраиваем
+  //путь скачивания файла (можно менять динамически, в зависимости от ссылки), помещаем на страницу с none-display
+  //и вручную вызываем клик при клике на триггер. кликая на триггер, происходит клик по ссылке и файл скачивается
+
+
+  _createClass(Download, [{
+    key: "downloadItem",
+    value: function downloadItem(path) {
+      var element = document.createElement("a");
+      element.setAttribute("href", path);
+      element.setAttribute("download", "nice-picture");
+      element.style.display = "none";
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
+  }, {
+    key: "init",
+    value: function init() {
+      var _this = this;
+
+      this.triggers.forEach(function (btn) {
+        btn.style.cursor = "pointer";
+        btn.addEventListener("click", function () {
+          _this.downloadItem(_this.path);
+        });
+      });
+    }
+  }]);
+
+  return Download;
+}(); //dwnl
+
+
+
 
 /***/ }),
 

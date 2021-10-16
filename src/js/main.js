@@ -4,6 +4,8 @@ import MainSlider from "./modules/slider/slider-main";
 import MiniSlider from "./modules/slider/slider-mini";
 import Question from "./modules/question-cards";
 import Forms from "./modules/forms";
+import Accordeon from "./modules/accordeon";
+import Download from "./modules/downloadFile";
 
 window.addEventListener("DOMContentLoaded", () => {
     const slider = new MainSlider({
@@ -76,5 +78,9 @@ window.addEventListener("DOMContentLoaded", () => {
         prev: ".prevmodule" 
     });
     secondPageSlider.render();
+
+    new Accordeon(".plus__content", ".msg").init();
+
+    new Download(".download").init();
     
 });
