@@ -45,6 +45,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     new ModalVideoPlayer(".showup  .play", ".overlay", ".close").init();
     new ModalVideoPlayer(".module__video-item .play", ".overlay", ".close").init();
+    new ModalVideoPlayer(".schedule__wrapper .play", ".overlay", ".close").init();
     
     const questionCardsOld = new Question({
         container: ".officerold",
@@ -59,6 +60,8 @@ window.addEventListener("DOMContentLoaded", () => {
     questionCardsNew.init();
 
     const bigForm = new Forms({
+        page: ".join__wrapper",
+        inputs: "input",
         forms: ".join .form",
         mailInputs: "[name='email']",
         phoneInputs: "[name='phone']"
@@ -66,6 +69,8 @@ window.addEventListener("DOMContentLoaded", () => {
     bigForm.init();
 
     const smallForm = new Forms({
+        page: ".schedule__wrapper",
+        inputs: "input",
         forms: ".schedule .form",
         mailInputs: "[name='email']"
     });
@@ -79,7 +84,7 @@ window.addEventListener("DOMContentLoaded", () => {
     });
     secondPageSlider.render();
 
-    new Accordeon(".plus__content", ".msg").init();
+    new Accordeon(".module__info-show .plus__content", ".msg").init();
 
     new Download(".download").init();
     

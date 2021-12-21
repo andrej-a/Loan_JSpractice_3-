@@ -2,7 +2,12 @@
 import { postDataFormToServer } from "../service/service";
 
 export default class Forms{
-    constructor({forms, mailInputs, phoneInputs = null}) {
+    constructor({page, inputs, forms, mailInputs, phoneInputs = null}) {
+        try {
+            this.page = document.querySelector(page);
+            this.inputs = this.page.querySelectorAll(inputs);
+        } catch(e) {}
+        
         this.forms = document.querySelectorAll(forms);
         this.mailInputs = document.querySelectorAll(mailInputs);
         this.phoneInputs = document.querySelectorAll(phoneInputs);
@@ -14,7 +19,8 @@ export default class Forms{
         this.statusMessage = {
             waiting: "Loading",
             done: "Your request has been sent. Thanks!",
-            error: "Error. Try again."
+            error: "Error. Try again.",
+            catchEmptyData: "Please, pervade your data!"
         };
     }
 
@@ -65,16 +71,36 @@ export default class Forms{
         });
     }
 
+    checkInputs(form, array, message) {
+        let flag = false;
+        array.forEach(input => {
+            if (input.value.length === 0) {
+                input.style.border = "1px solid red";
+                message.innerText = this.statusMessage.catchEmptyData;
+                form.appendChild(message);
+                flag = true;
+
+                setTimeout(() => {
+                    message.remove();
+                    input.style.border = "";
+                }, 3000);
+            }
+        })
+        
+        return flag;
+    }
+
     postDate(form) {
         form.addEventListener("submit", (event) => {
             event.preventDefault();
             const message = document.createElement("div");
             message.style.fontSize = "20px";
-            form.appendChild(message);
 
-            let statusIMG = document.createElement("img");
-            message.innerText = this.statusMessage.waiting;
-            message.appendChild(statusIMG);
+            if (this.checkInputs(form, this.inputs, message)) {
+                return;
+            }
+             message.innerText = this.statusMessage.waiting;
+            form.appendChild(message);
 
             const formData = new FormData(form);
 

@@ -5099,6 +5099,7 @@ window.addEventListener("DOMContentLoaded", function () {
   feedSlider.init();
   new _modules_modalVideoPlay__WEBPACK_IMPORTED_MODULE_0__["default"](".showup  .play", ".overlay", ".close").init();
   new _modules_modalVideoPlay__WEBPACK_IMPORTED_MODULE_0__["default"](".module__video-item .play", ".overlay", ".close").init();
+  new _modules_modalVideoPlay__WEBPACK_IMPORTED_MODULE_0__["default"](".schedule__wrapper .play", ".overlay", ".close").init();
   var questionCardsOld = new _modules_question_cards__WEBPACK_IMPORTED_MODULE_3__["default"]({
     container: ".officerold",
     cards: ".officer__card-item"
@@ -5110,12 +5111,16 @@ window.addEventListener("DOMContentLoaded", function () {
   });
   questionCardsNew.init();
   var bigForm = new _modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"]({
+    page: ".join__wrapper",
+    inputs: "input",
     forms: ".join .form",
     mailInputs: "[name='email']",
     phoneInputs: "[name='phone']"
   });
   bigForm.init();
   var smallForm = new _modules_forms__WEBPACK_IMPORTED_MODULE_4__["default"]({
+    page: ".schedule__wrapper",
+    inputs: "input",
     forms: ".schedule .form",
     mailInputs: "[name='email']"
   });
@@ -5127,7 +5132,7 @@ window.addEventListener("DOMContentLoaded", function () {
     prev: ".prevmodule"
   });
   secondPageSlider.render();
-  new _modules_accordeon__WEBPACK_IMPORTED_MODULE_5__["default"](".plus__content", ".msg").init();
+  new _modules_accordeon__WEBPACK_IMPORTED_MODULE_5__["default"](".module__info-show .plus__content", ".msg").init();
   new _modules_downloadFile__WEBPACK_IMPORTED_MODULE_6__["default"](".download").init();
 });
 
@@ -5318,12 +5323,19 @@ var Forms =
 /*#__PURE__*/
 function () {
   function Forms(_ref) {
-    var forms = _ref.forms,
+    var page = _ref.page,
+        inputs = _ref.inputs,
+        forms = _ref.forms,
         mailInputs = _ref.mailInputs,
         _ref$phoneInputs = _ref.phoneInputs,
         phoneInputs = _ref$phoneInputs === void 0 ? null : _ref$phoneInputs;
 
     _classCallCheck(this, Forms);
+
+    try {
+      this.page = document.querySelector(page);
+      this.inputs = this.page.querySelectorAll(inputs);
+    } catch (e) {}
 
     this.forms = document.querySelectorAll(forms);
     this.mailInputs = document.querySelectorAll(mailInputs);
@@ -5336,7 +5348,8 @@ function () {
     this.statusMessage = {
       waiting: "Loading",
       done: "Your request has been sent. Thanks!",
-      error: "Error. Try again."
+      error: "Error. Try again.",
+      catchEmptyData: "Please, pervade your data!"
     };
   }
 
@@ -5396,26 +5409,49 @@ function () {
       });
     }
   }, {
+    key: "checkInputs",
+    value: function checkInputs(form, array, message) {
+      var _this = this;
+
+      var flag = false;
+      array.forEach(function (input) {
+        if (input.value.length === 0) {
+          input.style.border = "1px solid red";
+          message.innerText = _this.statusMessage.catchEmptyData;
+          form.appendChild(message);
+          flag = true;
+          setTimeout(function () {
+            message.remove();
+            input.style.border = "";
+          }, 3000);
+        }
+      });
+      return flag;
+    }
+  }, {
     key: "postDate",
     value: function postDate(form) {
-      var _this = this;
+      var _this2 = this;
 
       form.addEventListener("submit", function (event) {
         event.preventDefault();
         var message = document.createElement("div");
         message.style.fontSize = "20px";
+
+        if (_this2.checkInputs(form, _this2.inputs, message)) {
+          return;
+        }
+
+        message.innerText = _this2.statusMessage.waiting;
         form.appendChild(message);
-        var statusIMG = document.createElement("img");
-        message.innerText = _this.statusMessage.waiting;
-        message.appendChild(statusIMG);
         var formData = new FormData(form);
         Object(_service_service__WEBPACK_IMPORTED_MODULE_6__["postDataFormToServer"])("assets/question.php", formData).then(function (result) {
           return result.text();
         }).then(function (result) {
           console.log(result);
-          message.innerText = _this.statusMessage.done;
+          message.innerText = _this2.statusMessage.done;
         }).catch(function (e) {
-          message.innerText = _this.statusMessage.error;
+          message.innerText = _this2.statusMessage.error;
         }).finally(function () {
           setTimeout(function () {
             message.remove();
@@ -5427,18 +5463,18 @@ function () {
   }, {
     key: "init",
     value: function init() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.phoneInputs) {
         this.phoneInputs.forEach(function (input) {
-          input.addEventListener("input", _this2.phoneMask);
-          input.addEventListener("focus", _this2.phoneMask);
-          input.addEventListener("blur", _this2.phoneMask);
+          input.addEventListener("input", _this3.phoneMask);
+          input.addEventListener("focus", _this3.phoneMask);
+          input.addEventListener("blur", _this3.phoneMask);
         });
       }
 
       this.forms.forEach(function (form) {
-        _this2.postDate(form);
+        _this3.postDate(form);
       });
       this.checkLanguages(this.mailInputs);
     }
